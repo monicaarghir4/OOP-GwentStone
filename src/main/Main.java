@@ -9,7 +9,8 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
-import main.game.details.InputDetails;
+import main.debug.SolveCommandsDebug;
+import main.gameDetails.details.InputDetails;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,8 +76,9 @@ public final class Main {
         //TODO add here the entry point to your implementation
 
         InputDetails data = new InputDetails(inputData);
+        SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
+        solveCommandsDebug.CheckCommands(filePath1, data, output);
 
-        System.out.println(data.getGames());
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
