@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
-import main.debug.SolveCommandsDebug;
+import main.commands.SolveCommandsDebug;
 import main.gameDetails.details.InputDetails;
 
 import java.io.File;

@@ -6,24 +6,33 @@ import java.util.ArrayList;
 
 public class Minion extends CardDetails {
     //TODO
-    private ArrayList<String> minionCards = new ArrayList<>();
+    private ArrayList<String> minionCardsFrontRow = new ArrayList<>();
+    private ArrayList<String> minionCardsBackRow = new ArrayList<>();
 
     public Minion(){
-        minionCards.add("Sentinel");
-        minionCards.add("Berserker");
-        minionCards.add("Goliath");
-        minionCards.add("Warden");
-        minionCards.add("The Ripper");
-        minionCards.add("Miraj");
-        minionCards.add("The Cursed One");
-        minionCards.add("Disciple");
+        minionCardsBackRow.add("Sentinel");
+        minionCardsBackRow.add("Berserker");
+        minionCardsFrontRow.add("Goliath");
+        minionCardsFrontRow.add("Warden");
+        minionCardsFrontRow.add("The Ripper");
+        minionCardsFrontRow.add("Miraj");
+        minionCardsBackRow.add("The Cursed One");
+        minionCardsBackRow.add("Disciple");
     }
 
-    public ArrayList<String> getMinionCards() {
-        return minionCards;
+    public ArrayList<String> getMinionCardsFrontRow() {
+        return minionCardsFrontRow;
     }
 
-    public void setMinionCards(ArrayList<String> minionCards) {
-        this.minionCards = minionCards;
+    public void setMinionCardsFrontRow(ArrayList<String> minionCardsFrontRow) {
+        this.minionCardsFrontRow = minionCardsFrontRow;
+    }
+
+    public ArrayList<String> getMinionCardsBackRow() {
+        return minionCardsBackRow;
+    }
+
+    public void setMinionCardsBackRow(ArrayList<String> minionCardsBackRow) {
+        this.minionCardsBackRow = minionCardsBackRow;
     }
 }

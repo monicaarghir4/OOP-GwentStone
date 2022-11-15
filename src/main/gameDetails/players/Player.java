@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 public class Player {
     private ArrayList<CardDetails> playersHand = new ArrayList<>();
-    private static int mana;
-    private static int gamesPlayed;
-    private static int wonGames;
+    private int mana;
+    private int gamesPlayed;
+    private int wonGames;
 
     public ArrayList<CardDetails> getPlayersHand() {
         return playersHand;
@@ -18,27 +18,31 @@ public class Player {
         this.playersHand = playersHand;
     }
 
-    public static int getMana() {
+    public int getMana() {
         return mana;
     }
 
-    public static void setMana(int mana) {
-        Player.mana = mana;
+    public void setMana(int mana) {
+        this.mana = mana;
     }
 
-    public static int getGamesPlayed() {
+    public int getGamesPlayed() {
         return gamesPlayed;
     }
 
-    public static void setGamesPlayed(int gamesPlayed) {
-        Player.gamesPlayed = gamesPlayed;
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
     }
 
-    public static int getWonGames() {
+    public int getWonGames() {
         return wonGames;
     }
 
-    public static void setWonGames(int wonGames) {
-        Player.wonGames = wonGames;
+    public void setWonGames(int wonGames) {
+        this.wonGames = wonGames;
+    }
+
+    public Player() {
+
     }
 }
