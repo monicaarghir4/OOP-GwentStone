@@ -9,6 +9,7 @@ import main.gameDetails.details.*;
 import main.gameDetails.players.Player;
 import main.output.*;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -60,7 +61,7 @@ public class SolveCommandsDebug {
                         break;
 
                     case "getCardAtPosition":
-                        //TODO
+                        getCardAtPosition(actionDetails, currGame, output);
                         break;
 
                     case "getPlayerMana":
@@ -72,7 +73,7 @@ public class SolveCommandsDebug {
                         break;
 
                     case "getFrozenCardsOnTable":
-                        //TODO
+                        getFrozenCardsOnTable(currGame, output);
                         break;
 
                     case "endPlayerTurn":
@@ -81,6 +82,10 @@ public class SolveCommandsDebug {
 
                     case "placeCard":
                         placeCard(actionDetails, currGame, output);
+                        break;
+
+                    case "useEnvironmentCard":
+                        useEnvironmentCard(actionDetails, currGame, output);
                         break;
                 }
             }
@@ -149,8 +154,13 @@ public class SolveCommandsDebug {
     }
 
     public void endPlayerTurn(GameDetails gameDetails, Game currGame, ArrayList<CardDetails> deckPlayer1, ArrayList<CardDetails> deckPlayer2, ArrayNode output) {
-        //TODO
-        // unfreeze the frozen cards
+        ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
+
+        for (ArrayList<CardDetails> row : gameTable) {
+            for (CardDetails cardDetails : row) {
+                cardDetails.setFrozen(false);
+            }
+        }
 
         if (currGame.getPlayersTurn() == 1) {
             currGame.setPlayersTurn(2);
@@ -176,13 +186,13 @@ public class SolveCommandsDebug {
 
                 if (environment.getEnvironmentCards().contains(card.getName())) {
                     OutputError outputError = new OutputError();
-                    outputError.outputError(actionsDetails.getHandIdx(), "Cannot place environment card on table.", output);
+                    outputError.outputErrorPlaceCard(actionsDetails.getHandIdx(), "placeCard", "Cannot place environment card on table.", output);
                     return;
                 }
 
                 if (card.getMana() > currGame.getPlayer1().getMana()) {
                     OutputError outputError = new OutputError();
-                    outputError.outputError(actionsDetails.getHandIdx(), "Not enough mana to place card on table.", output);
+                    outputError.outputErrorPlaceCard(actionsDetails.getHandIdx(), "placeCard", "Not enough mana to place card on table.", output);
                     return;
                 }
 
@@ -194,7 +204,7 @@ public class SolveCommandsDebug {
 
                 if (currGame.getGameTable().get(row).size() >= 5) {
                     OutputError outputError = new OutputError();
-                    outputError.outputError(actionsDetails.getHandIdx(), "Cannot place card on table since row is full.", output);
+                    outputError.outputErrorPlaceCard(actionsDetails.getHandIdx(), "placeCard", "Cannot place card on table since row is full.", output);
                     return;
                 }
 
@@ -209,13 +219,13 @@ public class SolveCommandsDebug {
 
                 if (environment.getEnvironmentCards().contains(card.getName())) {
                     OutputError outputError = new OutputError();
-                    outputError.outputError(actionsDetails.getHandIdx(), "Cannot place environment card on table.", output);
+                    outputError.outputErrorPlaceCard(actionsDetails.getHandIdx(), "placeCard", "Cannot place environment card on table.", output);
                     return;
                 }
 
                 if (card.getMana() > currGame.getPlayer2().getMana()) {
                     OutputError outputError = new OutputError();
-                    outputError.outputError(actionsDetails.getHandIdx(), "Not enough mana to place card on table.", output);
+                    outputError.outputErrorPlaceCard(actionsDetails.getHandIdx(), "placeCard", "Not enough mana to place card on table.", output);
                     return;
                 }
 
@@ -225,7 +235,7 @@ public class SolveCommandsDebug {
 
                 if (currGame.getGameTable().get(row).size() >= 5) {
                     OutputError outputError = new OutputError();
-                    outputError.outputError(actionsDetails.getHandIdx(), "Cannot place card on table since row is full.", output);
+                    outputError.outputErrorPlaceCard(actionsDetails.getHandIdx(), "placeCard", "Cannot place card on table since row is full.", output);
                     return;
                 }
 
@@ -292,5 +302,116 @@ public class SolveCommandsDebug {
 
         OutputGetEnvironmentCardsInHand outputGetEnvironmentCardsInHand = new OutputGetEnvironmentCardsInHand();
         outputGetEnvironmentCardsInHand.outputGetEnvironmentCardsInHand(playerIndex, environmentCards, output);
+    }
+
+    public void useEnvironmentCard(ActionsDetails actionsDetails, Game currGame, ArrayNode output) {
+        int playerIndex = currGame.getPlayersTurn();
+        int cardIndex = actionsDetails.getHandIdx();
+        int affectedRow = actionsDetails.getAffectedRow();
+
+        CardDetails card;
+
+        if (playerIndex == 1) {
+            if (!currGame.getPlayer1().getPlayersHand().isEmpty() && cardIndex < currGame.getPlayer1().getPlayersHand().size()) {
+                card = currGame.getPlayer1().getPlayersHand().get(cardIndex);
+
+                Environment environment = new Environment();
+
+                if (!environment.getEnvironmentCards().contains(card.getName())) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen card is not of type environment.", output);
+                    return;
+                }
+
+                if (card.getMana() > currGame.getPlayer1().getMana()) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Not enough mana to use environment card.", output);
+                    return;
+                }
+
+                if (affectedRow == 2 || affectedRow == 3) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen row does not belong to the enemy.", output);
+                    return;
+                }
+
+                if (affectedRow == 0) {
+                    if (currGame.getGameTable().get(3).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                } else {
+                    if (currGame.getGameTable().get(2).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                }
+
+                environment.useEnvironment(card, currGame, affectedRow);
+
+                currGame.getPlayer1().setMana(currGame.getPlayer1().getMana() - card.getMana());
+                currGame.getPlayer1().getPlayersHand().remove(card);
+            }
+        } else {
+            if (!currGame.getPlayer2().getPlayersHand().isEmpty() && cardIndex < currGame.getPlayer2().getPlayersHand().size()) {
+                card = currGame.getPlayer2().getPlayersHand().get(cardIndex);
+
+                Environment environment = new Environment();
+
+                if (!environment.getEnvironmentCards().contains(card.getName())) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen card is not of type environment.", output);
+                    return;
+                }
+
+                if (card.getMana() > currGame.getPlayer1().getMana()) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Not enough mana to use environment card.", output);
+                    return;
+                }
+
+                if (affectedRow == 0 || affectedRow == 1) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen row does not belong to the enemy.", output);
+                    return;
+                }
+
+                if (affectedRow == 2) {
+                    if (currGame.getGameTable().get(1).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                } else {
+                    if (currGame.getGameTable().get(0).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                }
+
+                environment.useEnvironment(card, currGame, affectedRow);
+
+                currGame.getPlayer2().setMana(currGame.getPlayer2().getMana() - card.getMana());
+                currGame.getPlayer2().getPlayersHand().remove(card);
+            }
+        }
+    }
+
+    public void getCardAtPosition(ActionsDetails actionsDetails, Game currGame, ArrayNode output) {
+        int coordX = actionsDetails.getX();
+        int coordY = actionsDetails.getY();
+
+        OutputGetCardAtPosition outputGetCardAtPosition = new OutputGetCardAtPosition();
+        outputGetCardAtPosition.outputGetCardAtPosition(coordX, coordY, currGame, output);
+    }
+
+    public void getFrozenCardsOnTable(Game currGame, ArrayNode output) {
+        ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
+
+        OutputGetFrozenCardsOnTable outputGetFrozenCardsOnTable = new OutputGetFrozenCardsOnTable();
+        outputGetFrozenCardsOnTable.outputGetFrozenCardsOnTable(gameTable, output);
     }
 }

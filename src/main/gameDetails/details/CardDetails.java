@@ -1,7 +1,9 @@
 package main.gameDetails.details;
 
 import fileio.CardInput;
+import main.gameDetails.card.environment.Environment;
 import main.gameDetails.card.hero.Hero;
+import main.gameDetails.card.minion.Minion;
 
 import java.util.ArrayList;
 
@@ -12,6 +14,16 @@ public class CardDetails {
     private String description;
     private ArrayList<String> colors = new ArrayList<>();
     private String name;
+
+    private boolean isFrozen;
+
+    public boolean isFrozen() {
+        return isFrozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        isFrozen = frozen;
+    }
 
     public CardDetails() {
     }
@@ -31,6 +43,35 @@ public class CardDetails {
         this.description = new String(card.getDescription());
         this.colors.addAll(card.getColors());
         this.name = new String(card.getName());
+
+        Minion minion = new Minion();
+
+        if (minion.getMinionCardsBackRow().contains(card.getName()) || minion.getMinionCardsFrontRow().contains(card.getName())) {
+            this.isFrozen = false;
+        }
+    }
+
+    public CardDetails(CardDetails card) {
+        this.mana = card.getMana();
+        this.attackDamage = card.getAttackDamage();
+
+        Hero hero = new Hero();
+
+        if (hero.getHeroCards().contains(card.getName())) {
+            this.health = 30;
+        } else {
+            this.health = card.getHealth();
+        }
+
+        this.description = new String(card.getDescription());
+        this.colors.addAll(card.getColors());
+        this.name = new String(card.getName());
+
+        Minion minion = new Minion();
+
+        if (minion.getMinionCardsBackRow().contains(card.getName()) || minion.getMinionCardsFrontRow().contains(card.getName())) {
+            this.isFrozen = false;
+        }
     }
 
     public int getMana() {
