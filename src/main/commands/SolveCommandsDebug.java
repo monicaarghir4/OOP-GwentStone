@@ -2,6 +2,7 @@ package main.commands;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.ActionsInput;
+import fileio.Coordinates;
 import main.game.Game;
 import main.gameDetails.card.environment.Environment;
 import main.gameDetails.card.minion.Minion;
@@ -87,6 +88,18 @@ public class SolveCommandsDebug {
                     case "useEnvironmentCard":
                         useEnvironmentCard(actionDetails, currGame, output);
                         break;
+
+                    case "cardUsesAttack":
+                        cardUsesAttack(actionDetails, currGame, output);
+                        break;
+
+                    case "cardUsesAbility":
+                        cardUsesAbility(actionDetails, currGame, output);
+                        break;
+
+                    case "useAttackHero":
+                        useAttackHero(actionDetails, currGame, gameDetails, output);
+                        break;
                 }
             }
         }
@@ -156,15 +169,29 @@ public class SolveCommandsDebug {
     public void endPlayerTurn(GameDetails gameDetails, Game currGame, ArrayList<CardDetails> deckPlayer1, ArrayList<CardDetails> deckPlayer2, ArrayNode output) {
         ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
 
-        for (ArrayList<CardDetails> row : gameTable) {
-            for (CardDetails cardDetails : row) {
-                cardDetails.setFrozen(false);
-            }
-        }
-
         if (currGame.getPlayersTurn() == 1) {
+            for (CardDetails card : gameTable.get(2)) {
+                card.setFrozen(false);
+                card.setHasAttacked(false);
+            }
+
+            for (CardDetails card : gameTable.get(3)) {
+                card.setFrozen(false);
+                card.setHasAttacked(false);
+            }
+
             currGame.setPlayersTurn(2);
         } else {
+            for (CardDetails card : gameTable.get(0)) {
+                card.setFrozen(false);
+                card.setHasAttacked(false);
+            }
+
+            for (CardDetails card : gameTable.get(1)) {
+                card.setFrozen(false);
+                card.setHasAttacked(false);
+            }
+
             currGame.setPlayersTurn(1);
         }
 
@@ -317,6 +344,20 @@ public class SolveCommandsDebug {
 
                 Environment environment = new Environment();
 
+                if (affectedRow == 0 && card.getName().compareTo("Heart Hound") == 0) {
+                    if (currGame.getGameTable().get(3).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                } else if (card.getName().compareTo("Heart Hound") == 0){
+                    if (currGame.getGameTable().get(2).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                }
+
                 if (!environment.getEnvironmentCards().contains(card.getName())) {
                     OutputError outputError = new OutputError();
                     outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen card is not of type environment.", output);
@@ -335,20 +376,6 @@ public class SolveCommandsDebug {
                     return;
                 }
 
-                if (affectedRow == 0) {
-                    if (currGame.getGameTable().get(3).size() == 5) {
-                        OutputError outputError = new OutputError();
-                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
-                        return;
-                    }
-                } else {
-                    if (currGame.getGameTable().get(2).size() == 5) {
-                        OutputError outputError = new OutputError();
-                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
-                        return;
-                    }
-                }
-
                 environment.useEnvironment(card, currGame, affectedRow);
 
                 currGame.getPlayer1().setMana(currGame.getPlayer1().getMana() - card.getMana());
@@ -360,13 +387,27 @@ public class SolveCommandsDebug {
 
                 Environment environment = new Environment();
 
+                if (affectedRow == 2 && card.getName().compareTo("Heart Hound") == 0) {
+                    if (currGame.getGameTable().get(1).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                } else if (card.getName().compareTo("Heart Hound") == 0){
+                    if (currGame.getGameTable().get(0).size() == 5) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
+                        return;
+                    }
+                }
+
                 if (!environment.getEnvironmentCards().contains(card.getName())) {
                     OutputError outputError = new OutputError();
                     outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen card is not of type environment.", output);
                     return;
                 }
 
-                if (card.getMana() > currGame.getPlayer1().getMana()) {
+                if (card.getMana() > currGame.getPlayer2().getMana()) {
                     OutputError outputError = new OutputError();
                     outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Not enough mana to use environment card.", output);
                     return;
@@ -376,20 +417,6 @@ public class SolveCommandsDebug {
                     OutputError outputError = new OutputError();
                     outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Chosen row does not belong to the enemy.", output);
                     return;
-                }
-
-                if (affectedRow == 2) {
-                    if (currGame.getGameTable().get(1).size() == 5) {
-                        OutputError outputError = new OutputError();
-                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
-                        return;
-                    }
-                } else {
-                    if (currGame.getGameTable().get(0).size() == 5) {
-                        OutputError outputError = new OutputError();
-                        outputError.outputErrorUseEnvironmentCard(affectedRow, cardIndex, "useEnvironmentCard", "Cannot steal enemy card since the player's row is full.", output);
-                        return;
-                    }
                 }
 
                 environment.useEnvironment(card, currGame, affectedRow);
@@ -413,5 +440,312 @@ public class SolveCommandsDebug {
 
         OutputGetFrozenCardsOnTable outputGetFrozenCardsOnTable = new OutputGetFrozenCardsOnTable();
         outputGetFrozenCardsOnTable.outputGetFrozenCardsOnTable(gameTable, output);
+    }
+
+    public void cardUsesAttack(ActionsDetails actionsDetails, Game currGame, ArrayNode output) {
+        int playersTurn = currGame.getPlayersTurn();
+
+        CoordinatesDetails coordinatesDetailsAttacked = actionsDetails.getCardAttacked();
+        CoordinatesDetails coordinatesDetailsAttacker = actionsDetails.getCardAttacker();
+
+        int coordXcardAttacked = coordinatesDetailsAttacked.getX();
+        int coordYcardAttacked = coordinatesDetailsAttacked.getY();
+
+        int coordXcardAttacker = coordinatesDetailsAttacker.getX();
+        int coordYcardAttacker = coordinatesDetailsAttacker.getY();
+
+        if (playersTurn == 1) {
+            if (coordXcardAttacked == 2 || coordXcardAttacked == 3) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacked card does not belong to the enemy.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                return;
+            }
+        } else {
+            if (coordXcardAttacked == 0 || coordXcardAttacked == 1) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacked card does not belong to the enemy.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                return;
+            }
+        }
+
+        ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
+
+        if (coordXcardAttacked < gameTable.size() && coordXcardAttacker < gameTable.size() &&
+                coordYcardAttacked < gameTable.get(coordXcardAttacked).size() &&
+                coordYcardAttacker < gameTable.get(coordXcardAttacker).size()) {
+
+            CardDetails cardAttacked = gameTable.get(coordXcardAttacked).get(coordYcardAttacked);
+            CardDetails cardAttacker = gameTable.get(coordXcardAttacker).get(coordYcardAttacker);
+
+            if (cardAttacker.isHasAttacked()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacker card has already attacked this turn.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                return;
+            }
+
+            if (cardAttacker.isFrozen()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacker card is frozen.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                return;
+            }
+
+            Minion minion = new Minion();
+
+            if (!minion.getTankCards().contains(cardAttacked.getName())) {
+                if (playersTurn == 1) {
+                    for (int column = 0; column < gameTable.get(0).size(); column++) {
+                        if (minion.getTankCards().contains(gameTable.get(0).get(column).getName())) {
+                            OutputError outputError = new OutputError();
+                            outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                            return;
+                        }
+                    }
+
+                    for (int column = 0; column < gameTable.get(1).size(); column++) {
+                        if (minion.getTankCards().contains(gameTable.get(1).get(column).getName())) {
+                            OutputError outputError = new OutputError();
+                            outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                            return;
+                        }
+                    }
+                } else {
+                    for (int column = 0; column < gameTable.get(2).size(); column++) {
+                        if (minion.getTankCards().contains(gameTable.get(2).get(column).getName())) {
+                            OutputError outputError = new OutputError();
+                            outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                            return;
+                        }
+                    }
+
+                    for (int column = 0; column < gameTable.get(3).size(); column++) {
+                        if (minion.getTankCards().contains(gameTable.get(3).get(column).getName())) {
+                            OutputError outputError = new OutputError();
+                            outputError.outputErrorCardUsesAttackAndAbility("cardUsesAttack", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            cardAttacked.setHealth(cardAttacked.getHealth() - cardAttacker.getAttackDamage());
+
+            if (cardAttacked.getHealth() < 1) {
+                if (playersTurn == 1) {
+                    if (coordXcardAttacked == 0) {
+                        gameTable.get(0).remove(cardAttacked);
+                    } else {
+                        gameTable.get(1).remove(cardAttacked);
+                    }
+                } else {
+                    if (coordXcardAttacked == 2) {
+                        gameTable.get(2).remove(cardAttacked);
+                    } else {
+                        gameTable.get(3).remove(cardAttacked);
+                    }
+                }
+            }
+
+            cardAttacker.setHasAttacked(true);
+        }
+    }
+
+    public void cardUsesAbility(ActionsDetails actionsDetails, Game currGame, ArrayNode output) {
+        int playersTurn = currGame.getPlayersTurn();
+
+        CoordinatesDetails coordinatesDetailsAttacked = actionsDetails.getCardAttacked();
+        CoordinatesDetails coordinatesDetailsAttacker = actionsDetails.getCardAttacker();
+
+        int coordXcardAttacked = coordinatesDetailsAttacked.getX();
+        int coordYcardAttacked = coordinatesDetailsAttacked.getY();
+
+        int coordXcardAttacker = coordinatesDetailsAttacker.getX();
+        int coordYcardAttacker = coordinatesDetailsAttacker.getY();
+
+        ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
+
+        if (coordXcardAttacked < gameTable.size() && coordXcardAttacker < gameTable.size() &&
+                coordYcardAttacked < gameTable.get(coordXcardAttacked).size() &&
+                coordYcardAttacker < gameTable.get(coordXcardAttacker).size()) {
+
+            CardDetails cardAttacked = gameTable.get(coordXcardAttacked).get(coordYcardAttacked);
+            CardDetails cardAttacker = gameTable.get(coordXcardAttacker).get(coordYcardAttacker);
+
+            if (cardAttacker.isFrozen()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacker card is frozen.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                return;
+            }
+
+            if (cardAttacker.isHasAttacked()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacker card has already attacked this turn.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                return;
+            }
+
+            if (cardAttacker.getName().compareTo("Disciple") == 0) {
+                if (playersTurn == 1) {
+                    if (coordXcardAttacked == 0 || coordXcardAttacked == 1) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card does not belong to the current player.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                        return;
+                    }
+                } else {
+                    if (coordXcardAttacked == 2 || coordXcardAttacked == 3) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card does not belong to the current player.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                        return;
+                    }
+                }
+            } else {
+                if (playersTurn == 1) {
+                    if (coordXcardAttacked == 2 || coordXcardAttacked == 3) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card does not belong to the enemy.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                        return;
+                    }
+                } else {
+                    if (coordXcardAttacked == 0 || coordXcardAttacked == 1) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card does not belong to the enemy.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                        return;
+                    }
+                }
+
+                Minion minion = new Minion();
+
+                if (!minion.getTankCards().contains(cardAttacked.getName())) {
+                    if (playersTurn == 1) {
+                        for (int column = 0; column < gameTable.get(0).size(); column++) {
+                            if (minion.getTankCards().contains(gameTable.get(0).get(column).getName())) {
+                                OutputError outputError = new OutputError();
+                                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                                return;
+                            }
+                        }
+
+                        for (int column = 0; column < gameTable.get(1).size(); column++) {
+                            if (minion.getTankCards().contains(gameTable.get(1).get(column).getName())) {
+                                OutputError outputError = new OutputError();
+                                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                                return;
+                            }
+                        }
+                    } else {
+                        for (int column = 0; column < gameTable.get(2).size(); column++) {
+                            if (minion.getTankCards().contains(gameTable.get(2).get(column).getName())) {
+                                OutputError outputError = new OutputError();
+                                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                                return;
+                            }
+                        }
+
+                        for (int column = 0; column < gameTable.get(3).size(); column++) {
+                            if (minion.getTankCards().contains(gameTable.get(3).get(column).getName())) {
+                                OutputError outputError = new OutputError();
+                                outputError.outputErrorCardUsesAttackAndAbility("cardUsesAbility", "Attacked card is not of type 'Tank'.", coordinatesDetailsAttacked, coordinatesDetailsAttacker, output);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            Minion minion = new Minion();
+
+            minion.useAbility(cardAttacker, cardAttacked, currGame, coordinatesDetailsAttacked);
+
+            cardAttacker.setHasAttacked(true);
+        }
+    }
+
+    public void useAttackHero(ActionsDetails actionsDetails, Game currGame, GameDetails gameDetails, ArrayNode output) {
+        int playersTurn = currGame.getPlayersTurn();
+
+        CoordinatesDetails coordCardAttacker = actionsDetails.getCardAttacker();
+
+        int coordAttackerX = coordCardAttacker.getX();
+        int coordAttackerY = coordCardAttacker.getY();
+
+        ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
+
+        if (coordAttackerX < gameTable.size() && coordAttackerY < gameTable.get(coordAttackerX).size()) {
+            CardDetails cardAttacker = gameTable.get(coordAttackerX).get(coordAttackerY);
+
+            if (cardAttacker.isFrozen()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorUseAttackHero("useAttackHero", "Attacker card is frozen.", coordCardAttacker, output);
+                return;
+            }
+
+            if (cardAttacker.isHasAttacked()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorUseAttackHero("useAttackHero", "Attacker card has already attacked this turn.", coordCardAttacker, output);
+                return;
+            }
+
+            Minion minion = new Minion();
+
+            if (playersTurn == 1) {
+                for (CardDetails card : currGame.getGameTable().get(0)) {
+                    if (minion.getTankCards().contains(card.getName())) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseAttackHero("useAttackHero", "Attacked card is not of type 'Tank'.", coordCardAttacker, output);
+                        return;
+                    }
+                }
+
+                for (CardDetails card : currGame.getGameTable().get(1)) {
+                    if (minion.getTankCards().contains(card.getName())) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseAttackHero("useAttackHero", "Attacked card is not of type 'Tank'.", coordCardAttacker, output);
+                        return;
+                    }
+                }
+            } else {
+                for (CardDetails card : currGame.getGameTable().get(2)) {
+                    if (minion.getTankCards().contains(card.getName())) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseAttackHero("useAttackHero", "Attacked card is not of type 'Tank'.", coordCardAttacker, output);
+                        return;
+                    }
+                }
+
+                for (CardDetails card : currGame.getGameTable().get(3)) {
+                    if (minion.getTankCards().contains(card.getName())) {
+                        OutputError outputError = new OutputError();
+                        outputError.outputErrorUseAttackHero("useAttackHero", "Attacked card is not of type 'Tank'.", coordCardAttacker, output);
+                        return;
+                    }
+                }
+            }
+
+            if (playersTurn == 1) {
+                CardDetails hero = gameDetails.getStartGame().getPlayerTwoHero();
+
+                hero.setHealth(hero.getHealth() - cardAttacker.getAttackDamage());
+
+                if (hero.getHealth() < 1) {
+                    //TODO
+                    // idk exact vezi tu
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorHeroDied(playersTurn, output);
+                    return;
+                }
+            } else {
+                CardDetails hero = gameDetails.getStartGame().getPlayerOneHero();
+
+                hero.setHealth(hero.getHealth() - cardAttacker.getAttackDamage());
+
+                if (hero.getHealth() < 1) {
+                    //TODO
+                    // idk exact vezi tu
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorHeroDied(playersTurn, output);
+                    return;
+                }
+            }
+
+            cardAttacker.setHasAttacked(true);
+        }
     }
 }

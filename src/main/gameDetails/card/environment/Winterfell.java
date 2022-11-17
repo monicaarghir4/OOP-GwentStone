@@ -12,9 +12,7 @@ public class Winterfell extends Environment{
         ArrayList<CardDetails> row = currGame.getGameTable().get(affectedRow);
 
         for (CardDetails card : row) {
-            if (!card.isFrozen()) {
                 card.setFrozen(true);
-            }
         }
     }
 }

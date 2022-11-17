@@ -17,6 +17,16 @@ public class CardDetails {
 
     private boolean isFrozen;
 
+    private boolean hasAttacked;
+
+    public boolean isHasAttacked() {
+        return hasAttacked;
+    }
+
+    public void setHasAttacked(boolean hasAttacked) {
+        this.hasAttacked = hasAttacked;
+    }
+
     public boolean isFrozen() {
         return isFrozen;
     }
@@ -48,6 +58,7 @@ public class CardDetails {
 
         if (minion.getMinionCardsBackRow().contains(card.getName()) || minion.getMinionCardsFrontRow().contains(card.getName())) {
             this.isFrozen = false;
+            this.hasAttacked = false;
         }
     }
 
@@ -71,6 +82,7 @@ public class CardDetails {
 
         if (minion.getMinionCardsBackRow().contains(card.getName()) || minion.getMinionCardsFrontRow().contains(card.getName())) {
             this.isFrozen = false;
+            this.hasAttacked = false;
         }
     }
 

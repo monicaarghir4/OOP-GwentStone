@@ -16,6 +16,8 @@ public class OutputGetCardAtPosition {
         outputCommand.put("y", coordY);
 
         if (coordY >= currGame.getGameTable().get(coordX).size()) {
+            OutputError outputError = new OutputError();
+            outputError.outputErrorGetCardAtPosition("getCardAtPosition", "No card available at that position.", coordX, coordY, output);
             return;
         }
 

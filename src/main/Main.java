@@ -75,15 +75,15 @@ public final class Main {
 
         //TODO add here the entry point to your implementation
 
-//        InputDetails data = new InputDetails(inputData);
-//        SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
-//        solveCommandsDebug.CheckCommands(filePath1, data, output);
+        InputDetails data = new InputDetails(inputData);
+        SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
+        solveCommandsDebug.CheckCommands(filePath1, data, output);
 
-        if (filePath1.equals("test05_use_environment_card_invalid.json")) {
-            InputDetails data = new InputDetails(inputData);
-            SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
-            solveCommandsDebug.CheckCommands(filePath1, data, output);
-        }
+//        if (filePath1.equals("test06_attack_card.json")) {
+//            InputDetails data = new InputDetails(inputData);
+//            SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
+//            solveCommandsDebug.CheckCommands(filePath1, data, output);
+//        }
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
