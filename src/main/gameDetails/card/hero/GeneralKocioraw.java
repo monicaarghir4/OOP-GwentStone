@@ -1,5 +1,12 @@
 package main.gameDetails.card.hero;
 
-public class GeneralKocioraw extends Hero{
-    //TODO Blood Thirst
+import main.game.Game;
+import main.gameDetails.details.CardDetails;
+
+public class GeneralKocioraw extends Hero {
+    public void BloodThirst (Game currGame, int affectedRow) {
+        for (CardDetails card : currGame.getGameTable().get(affectedRow)) {
+            card.setAttackDamage(card.getAttackDamage() + 1);
+        }
+    }
 }

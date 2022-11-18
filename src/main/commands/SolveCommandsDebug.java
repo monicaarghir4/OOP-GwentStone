@@ -3,8 +3,11 @@ package main.commands;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import fileio.ActionsInput;
 import fileio.Coordinates;
+import fileio.Input;
 import main.game.Game;
+import main.game.Statistics;
 import main.gameDetails.card.environment.Environment;
+import main.gameDetails.card.hero.Hero;
 import main.gameDetails.card.minion.Minion;
 import main.gameDetails.details.*;
 import main.gameDetails.players.Player;
@@ -16,10 +19,14 @@ import java.util.Collections;
 import java.util.Random;
 
 public class SolveCommandsDebug {
-    public void CheckCommands (String file, InputDetails inputDetails, ArrayNode output) {
+    public void CheckCommands (String file, Input inputOriginal, InputDetails inputDetails, ArrayNode output) {
         ArrayList<GameDetails> gamesDetails = inputDetails.getGames();
+        Statistics statistics = new Statistics();
 
         for (GameDetails gameDetails : gamesDetails) {
+            statistics.setTotalGamesPlayed(statistics.getTotalGamesPlayed() + 1);
+
+            inputDetails = new InputDetails(inputOriginal);
             ArrayList<ActionsDetails> actionsDetails = gameDetails.getActions();
 
             ArrayList<CardDetails> deckPlayer1, deckPlayer2;
@@ -98,7 +105,26 @@ public class SolveCommandsDebug {
                         break;
 
                     case "useAttackHero":
-                        useAttackHero(actionDetails, currGame, gameDetails, output);
+                        useAttackHero(actionDetails, currGame, gameDetails, output, statistics);
+                        break;
+
+                    case "useHeroAbility":
+                        useHeroAbility(actionDetails, currGame, gameDetails, output);
+                        break;
+
+                    case "getTotalGamesPlayed":
+                        OutputGetTotalGamesPlayed outputGetTotalGamesPlayed = new OutputGetTotalGamesPlayed();
+                        outputGetTotalGamesPlayed.outputGetTotalGamesPlayed(statistics, output);
+                        break;
+
+                    case "getPlayerOneWins":
+                        OutputPlayerOneWins outputPlayerOneWins = new OutputPlayerOneWins();
+                        outputPlayerOneWins.outputPlayerOneWins(statistics, output);
+                        break;
+
+                    case "getPlayerTwoWins":
+                        OutputPlayerTwoWins outputPlayerTwoWins = new OutputPlayerTwoWins();
+                        outputPlayerTwoWins.outputPlayerTwoWins(statistics, output);
                         break;
                 }
             }
@@ -181,6 +207,7 @@ public class SolveCommandsDebug {
             }
 
             currGame.setPlayersTurn(2);
+            gameDetails.getStartGame().getPlayerOneHero().setHasAttacked(false);
         } else {
             for (CardDetails card : gameTable.get(0)) {
                 card.setFrozen(false);
@@ -193,6 +220,7 @@ public class SolveCommandsDebug {
             }
 
             currGame.setPlayersTurn(1);
+            gameDetails.getStartGame().getPlayerTwoHero().setHasAttacked(false);
         }
 
         if (currGame.getPlayersTurn() == gameDetails.getStartGame().getStartingPlayer()) {
@@ -613,7 +641,7 @@ public class SolveCommandsDebug {
 
                 Minion minion = new Minion();
 
-                if (!minion.getTankCards().contains(cardAttacked.getName())) {
+                if (!minion.getTankCards().contains(cardAttacked.getName()) && cardAttacker.getName().compareTo("Disciple") != 0) {
                     if (playersTurn == 1) {
                         for (int column = 0; column < gameTable.get(0).size(); column++) {
                             if (minion.getTankCards().contains(gameTable.get(0).get(column).getName())) {
@@ -658,7 +686,7 @@ public class SolveCommandsDebug {
         }
     }
 
-    public void useAttackHero(ActionsDetails actionsDetails, Game currGame, GameDetails gameDetails, ArrayNode output) {
+    public void useAttackHero(ActionsDetails actionsDetails, Game currGame, GameDetails gameDetails, ArrayNode output, Statistics statistics) {
         int playersTurn = currGame.getPlayersTurn();
 
         CoordinatesDetails coordCardAttacker = actionsDetails.getCardAttacker();
@@ -725,10 +753,8 @@ public class SolveCommandsDebug {
                 hero.setHealth(hero.getHealth() - cardAttacker.getAttackDamage());
 
                 if (hero.getHealth() < 1) {
-                    //TODO
-                    // idk exact vezi tu
                     OutputError outputError = new OutputError();
-                    outputError.outputErrorHeroDied(playersTurn, output);
+                    outputError.outputErrorHeroDied(playersTurn, output, statistics);
                     return;
                 }
             } else {
@@ -737,15 +763,92 @@ public class SolveCommandsDebug {
                 hero.setHealth(hero.getHealth() - cardAttacker.getAttackDamage());
 
                 if (hero.getHealth() < 1) {
-                    //TODO
-                    // idk exact vezi tu
                     OutputError outputError = new OutputError();
-                    outputError.outputErrorHeroDied(playersTurn, output);
+                    outputError.outputErrorHeroDied(playersTurn, output, statistics);
                     return;
                 }
             }
 
             cardAttacker.setHasAttacked(true);
+        }
+    }
+
+    public void useHeroAbility(ActionsDetails actionsDetails, Game currGame, GameDetails gameDetails, ArrayNode output) {
+        int playersTurn = currGame.getPlayersTurn();
+
+        int affectedRow = actionsDetails.getAffectedRow();
+
+        ArrayList<ArrayList<CardDetails>> gameTable = currGame.getGameTable();
+        CardDetails hero;
+
+        if (playersTurn == 1) {
+            hero = gameDetails.getStartGame().getPlayerOneHero();
+            if (hero.getMana() > currGame.getPlayer1().getMana()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Not enough mana to use hero's ability.", output);
+                return;
+            }
+
+            if (hero.isHasAttacked()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Hero has already attacked this turn.", output);
+                return;
+            }
+
+            if (hero.getName().compareTo("Lord Royce") == 0 || hero.getName().compareTo("Empress Thorina") == 0) {
+                if (affectedRow == 2 || affectedRow == 3) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Selected row does not belong to the enemy.", output);
+                    return;
+                }
+            } else {
+                if (affectedRow == 0 || affectedRow == 1) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Selected row does not belong to the current player.", output);
+                    return;
+                }
+            }
+
+            Hero use = new Hero();
+
+            use.useAbility(hero, currGame, affectedRow);
+            hero.setHasAttacked(true);
+
+            currGame.getPlayer1().setMana(currGame.getPlayer1().getMana() - hero.getMana());
+        } else {
+            hero = gameDetails.getStartGame().getPlayerTwoHero();
+            if (hero.getMana() > currGame.getPlayer2().getMana()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Not enough mana to use hero's ability.", output);
+                return;
+            }
+
+            if (hero.isHasAttacked()) {
+                OutputError outputError = new OutputError();
+                outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Hero has already attacked this turn.", output);
+                return;
+            }
+
+            if (hero.getName().compareTo("Lord Royce") == 0 || hero.getName().compareTo("Empress Thorina") == 0) {
+                if (affectedRow == 0 || affectedRow == 1) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Selected row does not belong to the enemy.", output);
+                    return;
+                }
+            } else {
+                if (affectedRow == 2 || affectedRow == 3) {
+                    OutputError outputError = new OutputError();
+                    outputError.outputErrorUseHeroAbility("useHeroAbility", affectedRow, "Selected row does not belong to the current player.", output);
+                    return;
+                }
+            }
+
+            Hero use = new Hero();
+
+            use.useAbility(hero, currGame, affectedRow);
+            hero.setHasAttacked(true);
+
+            currGame.getPlayer2().setMana(currGame.getPlayer2().getMana() - hero.getMana());
         }
     }
 }

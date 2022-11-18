@@ -77,7 +77,7 @@ public final class Main {
 
         InputDetails data = new InputDetails(inputData);
         SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
-        solveCommandsDebug.CheckCommands(filePath1, data, output);
+        solveCommandsDebug.CheckCommands(filePath1, inputData, data, output); // inputdata de la ei ca sa ii fac copie in solve
 
 //        if (filePath1.equals("test06_attack_card.json")) {
 //            InputDetails data = new InputDetails(inputData);

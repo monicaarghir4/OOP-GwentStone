@@ -3,6 +3,7 @@ package main.output;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import main.game.Statistics;
 import main.gameDetails.details.ActionsDetails;
 import main.gameDetails.details.CoordinatesDetails;
 
@@ -84,15 +85,29 @@ public class OutputError {
         output.add(outputCommand);
     }
 
-    public void outputErrorHeroDied(int playersTurn, ArrayNode output) {
+    public void outputErrorHeroDied(int playersTurn, ArrayNode output, Statistics statistics) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputCommand = mapper.createObjectNode();
 
         if (playersTurn == 1) {
             outputCommand.put("gameEnded", "Player one killed the enemy hero.");
+            statistics.setPlayerOneWins(statistics.getPlayerOneWins() + 1);
+
         } else {
             outputCommand.put("gameEnded", "Player two killed the enemy hero.");
+            statistics.setPlayerTwoWins(statistics.getPlayerTwoWins() + 1);
         }
+
+        output.add(outputCommand);
+    }
+
+    public void outputErrorUseHeroAbility(String command, int affectedRow, String message, ArrayNode output) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode outputCommand = mapper.createObjectNode();
+
+        outputCommand.put("command", command);
+        outputCommand.put("affectedRow", affectedRow);
+        outputCommand.put("error", message);
 
         output.add(outputCommand);
     }
