@@ -1,12 +1,16 @@
 package main.gameDetails.card.minion.abilities;
 
-import main.game.Game;
 import main.gameDetails.card.minion.Minion;
 import main.gameDetails.details.CardDetails;
-import main.gameDetails.details.CoordinatesDetails;
 
+/**
+ * Class that implements the ability of the minion card
+ */
 public class TheRipper extends Minion {
-    public void WeakKnees (CardDetails cardAttacked) {
+    /**
+     * @param cardAttacked contains the data of the attacked card
+     */
+    public void weakKnees(final CardDetails cardAttacked) {
         cardAttacked.setAttackDamage(cardAttacked.getAttackDamage() - 2);
 
         if (cardAttacked.getAttackDamage() < 0) {

@@ -1,4 +1,4 @@
-package main.gameDetails.players;
+package main.gameDetails;
 
 import main.gameDetails.details.CardDetails;
 

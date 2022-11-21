@@ -5,33 +5,44 @@ import main.gameDetails.details.CardDetails;
 
 import java.util.ArrayList;
 
+/**
+ * Class used for the heroes type of cards
+ */
 public class Hero extends CardDetails {
-    //TODO
-    private ArrayList<String> heroCards = new ArrayList<>();
+    private final ArrayList<String> heroCards = new ArrayList<>();
 
-    public void useAbility(CardDetails hero, Game currGame, int affectedRow) {
+    /**
+     * verifies which type of hero card we have and uses its special ability
+     * @param hero the card we need to check
+     * @param currGame the game that is playing
+     * @param affectedRow the row that is going to be affected by the card
+     */
+    public void useAbility(final CardDetails hero, final Game currGame, final int affectedRow) {
         if (hero.getName().compareTo("Lord Royce") == 0) {
             LordRoyce lordRoyce = new LordRoyce();
 
-            lordRoyce.SubZero(currGame, affectedRow);
+            lordRoyce.subZero(currGame, affectedRow);
 
         } else if (hero.getName().compareTo("Empress Thorina") == 0) {
             EmpressThorina empressThorina = new EmpressThorina();
 
-            empressThorina.LowBlow(currGame, affectedRow);
+            empressThorina.lowBlow(currGame, affectedRow);
 
         } else if (hero.getName().compareTo("King Mudface") == 0) {
             KingMudface kingMudface = new KingMudface();
 
-            kingMudface.EarthBorn(currGame, affectedRow);
+            kingMudface.earthBorn(currGame, affectedRow);
 
         } else {
             GeneralKocioraw generalKocioraw = new GeneralKocioraw();
 
-            generalKocioraw.BloodThirst(currGame, affectedRow);
+            generalKocioraw.bloodThirst(currGame, affectedRow);
         }
     }
 
+    /**
+     * constructor that adds the names of the heroes to the arraylist
+     */
     public Hero() {
         heroCards.add("Empress Thorina");
         heroCards.add("General Kocioraw");
@@ -39,11 +50,10 @@ public class Hero extends CardDetails {
         heroCards.add("Lord Royce");
     }
 
+    /**
+     * @return returns the arraylist of heroes
+     */
     public ArrayList<String> getHeroCards() {
         return heroCards;
-    }
-
-    public void setHeroCards(ArrayList<String> heroCards) {
-        this.heroCards = heroCards;
     }
 }

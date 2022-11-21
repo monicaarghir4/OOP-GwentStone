@@ -10,35 +10,47 @@ import main.gameDetails.details.CoordinatesDetails;
 
 import java.util.ArrayList;
 
+/**
+ * Class used for the normal type of cards
+ */
 public class Minion extends CardDetails {
-    //TODO
     private ArrayList<String> minionCardsFrontRow = new ArrayList<>();
     private ArrayList<String> minionCardsBackRow = new ArrayList<>();
     private ArrayList<String> tankCards = new ArrayList<>();
 
-    public void useAbility(CardDetails cardAttacker, CardDetails cardAttacked, Game currGame, CoordinatesDetails coordCardAttacked) {
+    /**
+     * @param cardAttacker the card that contains the data of the attacker
+     * @param cardAttacked contains the data of the attacked card
+     * @param currGame the game that is playing
+     * @param coordinateCardAttacked the row and column of the affected card
+     */
+    public void useAbility(final CardDetails cardAttacker, final CardDetails cardAttacked,
+                           final Game currGame, final CoordinatesDetails coordinateCardAttacked) {
         if (cardAttacker.getName().compareTo("Disciple") == 0) {
             Disciple disciple = new Disciple();
 
-            disciple.GodsPlan(cardAttacked);
+            disciple.godsPlan(cardAttacked);
 
         } else if (cardAttacker.getName().compareTo("Miraj") == 0) {
             Miraj miraj = new Miraj();
 
-            miraj.Skyjack(cardAttacked, cardAttacker);
+            miraj.skyjack(cardAttacked, cardAttacker);
 
         } else if (cardAttacker.getName().compareTo("The Cursed One") == 0) {
             TheCursedOne theCursedOne = new TheCursedOne();
 
-            theCursedOne.Shapeshift(cardAttacked, currGame, coordCardAttacked);
+            theCursedOne.Shapeshift(cardAttacked, currGame, coordinateCardAttacked);
         } else if (cardAttacker.getName().compareTo("The Ripper") == 0) {
             TheRipper theRipper = new TheRipper();
 
-            theRipper.WeakKnees(cardAttacked);
+            theRipper.weakKnees(cardAttacked);
         }
     }
 
-    public Minion(){
+    /**
+     * constructor that adds the names of the cards to each arraylist
+     */
+    public Minion() {
         minionCardsBackRow.add("Sentinel");
         minionCardsBackRow.add("Berserker");
         minionCardsFrontRow.add("Goliath");
@@ -51,27 +63,24 @@ public class Minion extends CardDetails {
         tankCards.add("Warden");
     }
 
+    /**
+     * @return returns the arraylist which contains the tank cards
+     */
     public ArrayList<String> getTankCards() {
         return tankCards;
     }
 
-    public void setTankCards(ArrayList<String> tankCards) {
-        this.tankCards = tankCards;
-    }
-
+    /**
+     * @return returns the arraylist which contains the cards supposed to be on the first row
+     */
     public ArrayList<String> getMinionCardsFrontRow() {
         return minionCardsFrontRow;
     }
 
-    public void setMinionCardsFrontRow(ArrayList<String> minionCardsFrontRow) {
-        this.minionCardsFrontRow = minionCardsFrontRow;
-    }
-
+    /**
+     * @return returns the arraylist which contains the cards supposed to be on the back row
+     */
     public ArrayList<String> getMinionCardsBackRow() {
         return minionCardsBackRow;
-    }
-
-    public void setMinionCardsBackRow(ArrayList<String> minionCardsBackRow) {
-        this.minionCardsBackRow = minionCardsBackRow;
     }
 }

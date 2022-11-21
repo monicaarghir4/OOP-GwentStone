@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import checker.CheckerConstants;
 import fileio.Input;
-import main.commands.SolveCommandsDebug;
+import main.commands.SolveCommands;
 import main.gameDetails.details.InputDetails;
 
 import java.io.File;
@@ -76,14 +76,8 @@ public final class Main {
         //TODO add here the entry point to your implementation
 
         InputDetails data = new InputDetails(inputData);
-        SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
-        solveCommandsDebug.CheckCommands(filePath1, inputData, data, output); // inputdata de la ei ca sa ii fac copie in solve
-
-//        if (filePath1.equals("test06_attack_card.json")) {
-//            InputDetails data = new InputDetails(inputData);
-//            SolveCommandsDebug solveCommandsDebug = new SolveCommandsDebug();
-//            solveCommandsDebug.CheckCommands(filePath1, data, output);
-//        }
+        SolveCommands solveCommands = new SolveCommands();
+        solveCommands.checkCommands(inputData, data, output); // inputdata de la ei ca sa ii fac copie in solve
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);
