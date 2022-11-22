@@ -4,45 +4,37 @@ import main.gameDetails.details.CardDetails;
 
 import java.util.ArrayList;
 
+/**
+ * Class that holds the details of a player
+ */
 public class Player {
-    private ArrayList<CardDetails> playersHand = new ArrayList<>();
+    private final ArrayList<CardDetails> playersHand = new ArrayList<>();
     private int mana;
-    private int gamesPlayed;
-    private int wonGames;
 
+    /**
+     * @return returns the cards a player has in his hand
+     */
     public ArrayList<CardDetails> getPlayersHand() {
         return playersHand;
     }
 
-    public void setPlayersHand(ArrayList<CardDetails> playersHand) {
-        this.playersHand = playersHand;
-    }
-
+    /**
+     * @return returns the mana of a player
+     */
     public int getMana() {
         return mana;
     }
 
-    public void setMana(int mana) {
+    /**
+     * @param mana changes the mana of a player
+     */
+    public void setMana(final int mana) {
         this.mana = mana;
     }
 
-    public int getGamesPlayed() {
-        return gamesPlayed;
-    }
-
-    public void setGamesPlayed(int gamesPlayed) {
-        this.gamesPlayed = gamesPlayed;
-    }
-
-    public int getWonGames() {
-        return wonGames;
-    }
-
-    public void setWonGames(int wonGames) {
-        this.wonGames = wonGames;
-    }
-
+    /**
+     * default constructor
+     */
     public Player() {
-
     }
 }

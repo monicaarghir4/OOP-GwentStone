@@ -3,13 +3,20 @@ package main.output;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import main.game.Game;
 import main.gameDetails.details.CardDetails;
 
 import java.util.ArrayList;
 
+/**
+ * Class that writes in the json format for the output
+ */
 public class OutputGetCardsOnTable {
-    public void outputGetCardsOnTable (ArrayList<ArrayList<CardDetails>> gameTable, ArrayNode output) {
+    /**
+     * @param gameTable the table of the game
+     * @param output where we will add
+     */
+    public void outputGetCardsOnTable(final ArrayList<ArrayList<CardDetails>> gameTable,
+                                      final ArrayNode output) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputCommand = mapper.createObjectNode();
 

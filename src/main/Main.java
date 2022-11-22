@@ -1,7 +1,5 @@
 package main;
 
-import java.lang.String;
-
 import checker.Checker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,7 +75,7 @@ public final class Main {
 
         InputDetails data = new InputDetails(inputData);
         SolveCommands solveCommands = new SolveCommands();
-        solveCommands.checkCommands(inputData, data, output); // inputdata de la ei ca sa ii fac copie in solve
+        solveCommands.checkCommands(inputData, data, output);
 
         ObjectWriter objectWriter = objectMapper.writerWithDefaultPrettyPrinter();
         objectWriter.writeValue(new File(filePath2), output);

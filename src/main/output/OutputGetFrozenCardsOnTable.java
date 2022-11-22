@@ -7,8 +7,16 @@ import main.gameDetails.details.CardDetails;
 
 import java.util.ArrayList;
 
+/**
+ * Class that writes in the json format for the output
+ */
 public class OutputGetFrozenCardsOnTable {
-    public void outputGetFrozenCardsOnTable (ArrayList<ArrayList<CardDetails>> gameTable, ArrayNode output) {
+    /**
+     * @param gameTable the table of the game
+     * @param output where we will add
+     */
+    public void outputGetFrozenCardsOnTable(final ArrayList<ArrayList<CardDetails>> gameTable,
+                                            final ArrayNode output) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputCommand = mapper.createObjectNode();
 

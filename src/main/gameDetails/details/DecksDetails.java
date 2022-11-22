@@ -5,15 +5,25 @@ import fileio.DecksInput;
 
 import java.util.ArrayList;
 
+/**
+ * Class that deep copies the decks details from the input
+ */
 public class DecksDetails {
     private int nrCardsInDeck;
     private int nrDecks;
     private ArrayList<ArrayList<CardDetails>> decks = new ArrayList<>();
 
+    /**
+     * default constructor
+     */
     public DecksDetails() {
     }
 
-    public DecksDetails(DecksInput decksInput) {
+    /**
+     * deep copies from the input
+     * @param decksInput the decks input
+     */
+    public DecksDetails(final DecksInput decksInput) {
         this.nrCardsInDeck = decksInput.getNrCardsInDeck();
         this.nrDecks = decksInput.getNrDecks();
 
@@ -27,27 +37,45 @@ public class DecksDetails {
         }
     }
 
+    /**
+     * @return returns the number of cards in the deck
+     */
     public int getNrCardsInDeck() {
         return nrCardsInDeck;
     }
 
-    public void setNrCardsInDeck(int nrCardsInDeck) {
+    /**
+     * @param nrCardsInDeck changes the number of cards in the deck
+     */
+    public void setNrCardsInDeck(final int nrCardsInDeck) {
         this.nrCardsInDeck = nrCardsInDeck;
     }
 
+    /**
+     * @return returns the number of decks for a player
+     */
     public int getNrDecks() {
         return nrDecks;
     }
 
-    public void setNrDecks(int nrDecks) {
+    /**
+     * @param nrDecks changes the number of decks for a player
+     */
+    public void setNrDecks(final int nrDecks) {
         this.nrDecks = nrDecks;
     }
 
+    /**
+     * @return returns the decks
+     */
     public ArrayList<ArrayList<CardDetails>> getDecks() {
         return decks;
     }
 
-    public void setDecks(ArrayList<ArrayList<CardDetails>> decks) {
+    /**
+     * @param decks changes the decks
+     */
+    public void setDecks(final ArrayList<ArrayList<CardDetails>> decks) {
         this.decks = decks;
     }
 }

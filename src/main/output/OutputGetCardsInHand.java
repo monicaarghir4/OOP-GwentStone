@@ -7,8 +7,18 @@ import main.gameDetails.details.CardDetails;
 
 import java.util.ArrayList;
 
+/**
+ * Class that writes in the json format for the output
+ */
 public class OutputGetCardsInHand {
-    public void outputGetCardsInHand (int playerIndex, ArrayList<CardDetails> playersHand, ArrayNode output) {
+    /**
+     * @param playerIndex the index of the player
+     * @param playersHand the players hand of cards
+     * @param output where we will add
+     */
+    public void outputGetCardsInHand(final int playerIndex,
+                                     final ArrayList<CardDetails> playersHand,
+                                     final ArrayNode output) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputCommand = mapper.createObjectNode();
 

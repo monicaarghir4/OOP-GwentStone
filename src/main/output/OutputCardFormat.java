@@ -7,8 +7,15 @@ import main.gameDetails.card.environment.Environment;
 import main.gameDetails.card.hero.Hero;
 import main.gameDetails.details.CardDetails;
 
+/**
+ * Class that writes in the json format for the output
+ */
 public class OutputCardFormat {
-    public ObjectNode outputcard (CardDetails cardDetails) {
+    /**
+     * @param cardDetails the card we want to print
+     * @return the format of the card
+     */
+    public ObjectNode outputCard(final CardDetails cardDetails) {
         ObjectMapper mapper = new ObjectMapper();
 
         ObjectNode card = mapper.createObjectNode();

@@ -5,8 +5,15 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import main.game.Statistics;
 
+/**
+ * Class that writes in the json format for the output
+ */
 public class OutputGetTotalGamesPlayed {
-    public void outputGetTotalGamesPlayed (Statistics statistics, ArrayNode output) {
+    /**
+     * @param statistics the statistics of the game
+     * @param output the output where we should add
+     */
+    public void outputGetTotalGamesPlayed(final Statistics statistics, final ArrayNode output) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputCommand = mapper.createObjectNode();
 
